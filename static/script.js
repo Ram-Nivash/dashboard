@@ -26,24 +26,32 @@ document.addEventListener('DOMContentLoaded', function() {
         fetch('/data')
             .then(response => response.json())
             .then(data => {
-                document.getElementById('temperature').textContent = `${data.temperature} °C`;
-                document.getElementById('humidity').textContent = `${data.humidity} %`;
-                document.getElementById('co2').textContent = `${data.co2} ppm`;
-                document.getElementById('air-quality').textContent = data.air_quality;
+                document.getElementById('temperature').textContent = 
+                    data.temperature !== null ? `${data.temperature.toFixed(1)} °C` : '-- °C';
+
+                document.getElementById('humidity').textContent = 
+                    data.humidity !== null ? `${data.humidity.toFixed(1)} %` : '-- %';
+
+                document.getElementById('co2').textContent = 
+                    data.co2 !== null ? `${data.co2} ppm` : '-- ppm';
+
+                document.getElementById('air-quality').textContent = 
+                    data.air_quality || '--';
 
                 // Update chart
-                const time = new Date().toLocaleTimeString();
-                chart.data.labels.push(time);
-                chart.data.datasets[0].data.push(data.temperature);
-                chart.data.datasets[1].data.push(data.humidity);
-
-                // Keep only last 15 data points
-                if (chart.data.labels.length > 15) {
-                    chart.data.labels.shift();
-                    chart.data.datasets.forEach(dataset => dataset.data.shift());
+                if (data.temperature !== null && data.humidity !== null) {
+                    const time = new Date().toLocaleTimeString();
+                    chart.data.labels.push(time);
+                    chart.data.datasets[0].data.push(data.temperature);
+                    chart.data.datasets[1].data.push(data.humidity);
+                
+                    // Keep only last 15 data points
+                    if (chart.data.labels.length > 15) {
+                        chart.data.labels.shift();
+                        chart.data.datasets.forEach(dataset => dataset.data.shift());
+                    }
+                    chart.update();
                 }
-
-                chart.update();
             });
     }
 
