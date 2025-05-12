@@ -28,15 +28,21 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(data => {
                 document.getElementById('temperature').textContent = 
                     data.temperature !== null ? `${data.temperature.toFixed(1)} °C` : '-- °C';
-
                 document.getElementById('humidity').textContent = 
                     data.humidity !== null ? `${data.humidity.toFixed(1)} %` : '-- %';
-
                 document.getElementById('co2').textContent = 
                     data.co2 !== null ? `${data.co2} ppm` : '-- ppm';
-
+                document.getElementById('forecast').textContent =
+                    data.forecast !== null ? `${data.forecast.toFixed(1)} ppm` : '-- ppm';
                 document.getElementById('air-quality').textContent = 
                     data.air_quality || '--';
+                
+                // Show anomaly warning if detected
+                if (data.anomaly) {
+                    document.getElementById('anomaly').textContent = '⚠️ Anomaly Detected';
+                } else {
+                    document.getElementById('anomaly').textContent = '';
+                }
 
                 // Update chart
                 if (data.temperature !== null && data.humidity !== null) {
@@ -56,6 +62,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Update every 3 seconds
-    setInterval(updateDashboard, 3000);
+    setInterval(updateDashboard, 7000);
     updateDashboard(); // Initial call
 });
